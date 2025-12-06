@@ -7,10 +7,6 @@ terraform {
   }
 }
 
-provider "digitalocean" {
-  token = var.do_token
-}
-
 # Use existing SSH key from DigitalOcean
 data "digitalocean_ssh_key" "default" {
   name = "Imran-ssh-key"
