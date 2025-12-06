@@ -34,12 +34,12 @@ help:
 # Build Docker images
 build:
 	@echo "🔨 Building Docker images..."
-	docker-compose build
+	docker compose build
 
 # Start all services
 up:
 	@echo "🚀 Starting all services..."
-	docker-compose up -d
+	docker compose up -d
 	@echo "✅ Services started. Use 'make logs' to view logs."
 	@echo "🌐 API will be available at: http://localhost:8000"
 	@echo "📚 API docs at: http://localhost:8000/docs"
@@ -47,32 +47,32 @@ up:
 # Stop all services
 down:
 	@echo "🛑 Stopping all services..."
-	docker-compose down
+	docker compose down
 	@echo "✅ Services stopped."
 
 # Show logs
 logs:
-	docker-compose logs -f
+	docker compose logs -f
 
 # Access API container shell
 shell:
-	docker-compose exec api bash
+	docker compose exec api bash
 
 # Access database shell
 shell-db:
-	docker-compose exec db psql -U quran_user -d quran_hadith_db
+	docker compose exec db psql -U quran_user -d quran_hadith_db
 
 # Clean everything
 clean:
 	@echo "🧹 Cleaning up Docker resources..."
-	docker-compose down -v --rmi all --remove-orphans
+	docker compose down -v --rmi all --remove-orphans
 	docker system prune -f
 	@echo "✅ Cleanup completed."
 
 # Seed database
 seed-db:
 	@echo "🌱 Seeding database with sample data..."
-	docker-compose exec api python -m app.db.seed
+	docker compose exec api python -m app.db.seed
 	@echo "✅ Database seeded successfully!"
 
 # Reset database (dangerous)
@@ -80,8 +80,8 @@ reset-db:
 	@echo "⚠️  WARNING: This will delete all data!"
 	@read -p "Are you sure? (yes/no): " confirm && [ "$$confirm" = "yes" ]
 	@if [ "$$confirm" = "yes" ]; then \
-		docker-compose down -v; \
-		docker-compose up -d db; \
+		docker compose down -v; \
+		docker compose up -d db; \
 		sleep 10; \
 		make seed-db; \
 		echo "✅ Database reset completed."; \
@@ -92,29 +92,29 @@ reset-db:
 # Run tests
 test:
 	@echo "🧪 Running API tests..."
-	docker-compose exec api pytest -v
+	docker compose exec api pytest -v
 
 # Run tests with coverage
 test-coverage:
 	@echo "🧪 Running tests with coverage..."
-	docker-compose exec api pytest --cov=app --cov-report=html --cov-report=term
+	docker compose exec api pytest --cov=app --cov-report=html --cov-report=term
 
 # Lint code
 lint:
 	@echo "🔍 Linting code..."
-	docker-compose exec api flake8 app/ tests/
-	docker-compose exec api black --check app/ tests/
+	docker compose exec api flake8 app/ tests/
+	docker compose exec api black --check app/ tests/
 
 # Format code
 format:
 	@echo "🎨 Formatting code..."
-	docker-compose exec api black app/ tests/
-	docker-compose exec api isort app/ tests/
+	docker compose exec api black app/ tests/
+	docker compose exec api isort app/ tests/
 
 # Install dependencies
 install:
 	@echo "📦 Installing dependencies..."
-	docker-compose exec api pip install -r requirements.txt
+	docker compose exec api pip install -r requirements.txt
 
 # Test API endpoints
 test-api:
@@ -163,15 +163,15 @@ prod-deploy:
 	@echo "   export SECRET_KEY=your_prod_secret"
 	@echo ""
 	@echo "2. Deploy with:"
-	@echo "   docker-compose -f docker-compose.prod.yml up -d"
+	@echo "   docker compose -f docker compose.prod.yml up -d"
 
 # Backup database
 backup-db:
 	@echo "💾 Creating database backup..."
-	docker-compose exec db pg_dump -U quran_user quran_hadith_db > backup_$$(date +%Y%m%d_%H%M%S).sql
+	docker compose exec db pg_dump -U quran_user quran_hadith_db > backup_$$(date +%Y%m%d_%H%M%S).sql
 	@echo "✅ Backup completed."
 
 # Show service status
 status:
 	@echo "📊 Service Status:"
-	docker-compose ps
+	docker compose ps
