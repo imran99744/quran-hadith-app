@@ -57,17 +57,6 @@ resource "digitalocean_firewall" "quran_hadith" {
   }
 }
 
-# Cloud-init script for initial setup
-data "cloudinit_config" "setup" {
-  gzip = false
-  base64_encode = false
-
-  part {
-    content_type = "text/x-shellscript"
-    content = file("../scripts/setup.sh")
-  }
-}
-
 # Main droplet
 resource "digitalocean_droplet" "quran_hadith" {
   image    = "ubuntu-22-04-x64"
@@ -75,7 +64,6 @@ resource "digitalocean_droplet" "quran_hadith" {
   region   = var.region
   size     = var.droplet_size
   ssh_keys = [data.digitalocean_ssh_key.default.fingerprint]
-  user_data = data.cloudinit_config.setup.rendered
 
   tags = ["quran-hadith", "api", "production"]
 }
