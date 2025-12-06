@@ -30,6 +30,11 @@ help:
 	@echo "🌐 API Testing:"
 	@echo "  make test-api  - Test API endpoints"
 	@echo "  make health    - Check API health"
+	@echo ""
+	@echo "🚀 Production:"
+	@echo "  make prod-deploy - Deploy with managed database"
+	@echo "  make prod-logs   - View production logs"
+	@echo "  make prod-down   - Stop production services"
 
 # Build Docker images
 build:
@@ -155,15 +160,35 @@ dev-setup: install
 	@echo "🔧 Development environment setup completed!"
 	@echo "Run 'make up' to start services."
 
-# Production deployment helpers
+# Production deployment with managed database
 prod-deploy:
-	@echo "🚀 Production deployment helpers:"
-	@echo "1. Set environment variables:"
-	@echo "   export DATABASE_URL=your_prod_db_url"
-	@echo "   export SECRET_KEY=your_prod_secret"
-	@echo ""
-	@echo "2. Deploy with:"
-	@echo "   docker compose -f docker compose.prod.yml up -d"
+	@echo "🚀 Deploying to production with managed database..."
+	docker compose -f docker-compose.prod.yml down
+	docker compose -f docker-compose.prod.yml build
+	docker compose -f docker-compose.prod.yml up -d
+	@echo "✅ Production deployment completed!"
+	@echo "🌐 API: http://localhost:8000"
+	@echo "📚 Docs: http://localhost:8000/docs"
+
+# Production logs
+prod-logs:
+	docker compose -f docker-compose.prod.yml logs -f
+
+# Production down
+prod-down:
+	@echo "🛑 Stopping production services..."
+	docker compose -f docker-compose.prod.yml down
+	@echo "✅ Production services stopped."
+
+# Production shell
+prod-shell:
+	docker compose -f docker-compose.prod.yml exec api bash
+
+# Production seed database
+prod-seed-db:
+	@echo "🌱 Seeding production database..."
+	docker compose -f docker-compose.prod.yml exec api python -m app.db.seed
+	@echo "✅ Production database seeded successfully!"
 
 # Backup database
 backup-db:
