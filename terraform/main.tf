@@ -11,10 +11,9 @@ provider "digitalocean" {
   token = var.do_token
 }
 
-# SSH Key for accessing the droplet
-resource "digitalocean_ssh_key" "default" {
-  name       = "quran-hadith-key"
-  public_key = file(var.ssh_public_key_path)
+# Use existing SSH key from DigitalOcean
+data "digitalocean_ssh_key" "default" {
+  name = "Imran-ssh-key"
 }
 
 # Firewall to allow necessary ports
@@ -75,7 +74,7 @@ resource "digitalocean_droplet" "quran_hadith" {
   name     = "quran-hadith-api"
   region   = var.region
   size     = var.droplet_size
-  ssh_keys = [digitalocean_ssh_key.default.fingerprint]
+  ssh_keys = [data.digitalocean_ssh_key.default.fingerprint]
   user_data = data.cloudinit_config.setup.rendered
 
   tags = ["quran-hadith", "api", "production"]

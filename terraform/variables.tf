@@ -15,9 +15,3 @@ variable "droplet_size" {
   type        = string
   default     = "s-2vcpu-4gb"
 }
-
-variable "ssh_public_key_path" {
-  description = "Path to SSH public key"
-  type        = string
-  default     = "~/.ssh/id_rsa.pub"
-}
